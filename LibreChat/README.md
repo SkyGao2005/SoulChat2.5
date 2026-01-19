@@ -153,27 +153,6 @@ modelSpecs:
 - `label`: 修改显示给用户的名称
 - `greeting`: 修改对话开始时的问候语
 - `promptPrefix`: 修改系统提示词
-
-## docker-compose.override.yml 说明
-
-此文件用于覆盖 LibreChat 官方 docker-compose.yml 的配置。
-
-### 当前配置
-
-```yaml
-services:
-  api:
-    volumes:
-    - type: bind
-      source: ./librechat.yaml
-      target: /app/librechat.yaml
-    image: ghcr.io/danny-avila/librechat:latest
-```
-
-**功能**：
-- 将本地的 `librechat.yaml` 挂载到容器中
-- 使用最新版本的 LibreChat 镜像
-
 ---
 
 ## 快速开始
