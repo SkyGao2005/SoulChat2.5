@@ -84,12 +84,6 @@ endpoints:
 - `paramDefinitions`: 调整 `temperature`、`top_p` 的默认值
 - `addParams`: 调整 `top_k`、`min_p` 等参数
 
-**环境变量设置**：
-```bash
-export SOULCHAT_VLLM_API_KEY="your-api-key"
-export SOULCHAT_VLLM_BASE_URL="http://your-vllm-server:8000/v1"
-```
-
 ---
 
 ### 4. 记忆功能 (memory)
@@ -158,20 +152,7 @@ modelSpecs:
 **可修改项**：
 - `label`: 修改显示给用户的名称
 - `greeting`: 修改对话开始时的问候语
-- `promptPrefix`: 修改系统提示词（这是最重要的配置）
-
-#### 系统提示词 (promptPrefix) 说明
-
-当前配置的系统提示词包含以下要点：
-1. **角色定位**：温暖、平易近人的心理支持咨询师
-2. **整体风格**：亲和度高、语气柔和、避免学术化表达
-3. **对话原则**：先共情再分析、尊重自主、聚焦当下
-4. **REBT 流程**：隐式使用理情行为疗法（不讲术语）
-5. **语言约束**：每次回复 150-220 字，避免长篇说教
-
-如需修改咨询风格，请编辑 `promptPrefix` 部分。
-
----
+- `promptPrefix`: 修改系统提示词
 
 ## docker-compose.override.yml 说明
 
@@ -192,47 +173,6 @@ services:
 **功能**：
 - 将本地的 `librechat.yaml` 挂载到容器中
 - 使用最新版本的 LibreChat 镜像
-
-### 常用扩展配置
-
-#### 添加 Ollama 支持
-```yaml
-  ollama:
-    image: ollama/ollama:latest
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              capabilities: [compute, utility]
-    ports:
-      - "11434:11434"
-    volumes:
-      - ./ollama:/root/.ollama
-```
-
-#### 添加 Mongo Express（数据库管理界面）
-```yaml
-  mongo-express:
-    image: mongo-express
-    container_name: mongo-express
-    environment:
-      ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: password
-    ports:
-      - '8081:8081'
-    depends_on:
-      - mongodb
-    restart: always
-```
-
-#### 禁用 Meilisearch（搜索功能）
-```yaml
-  meilisearch:
-    profiles:
-      - donotstart
-```
 
 ---
 
@@ -266,15 +206,6 @@ docker compose logs -f api
 ### 3. 访问界面
 
 打开浏览器访问 `http://localhost:3080`
-
----
-
-## 注意事项
-
-1. **API 密钥安全**：请勿将 API 密钥直接写入配置文件，应使用环境变量
-2. **域名白名单**：确保 vLLM 服务器地址已添加到 `allowedDomains`
-3. **模型路径**：如果使用本地模型，确保路径正确配置
-4. **记忆功能**：心理咨询场景下请谨慎存储敏感信息，注意隐私保护
 
 ---
 

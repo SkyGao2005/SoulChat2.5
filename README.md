@@ -134,18 +134,6 @@ python start_vllm.py
 
 服务启动后，API 端点为：`http://localhost:6006/v1`
 
-#### 4. 验证服务
-
-```bash
-curl http://localhost:6006/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-local-change-me" \
-  -d '{
-    "model": "qwen3-14b-soulchat",
-    "messages": [{"role": "user", "content": "你好"}]
-  }'
-```
-
 详细配置说明请参考 [vllm/README.md](vllm/README.md)
 
 ---
@@ -156,10 +144,6 @@ LibreChat 提供 Web 聊天界面，连接 vLLM 后端服务。
 
 ```bash
 cd LibreChat
-
-# 设置环境变量（与 vLLM 配置对应）
-export SOULCHAT_VLLM_API_KEY="sk-local-change-me"
-export SOULCHAT_VLLM_BASE_URL="http://localhost:6006/v1"
 
 # 启动服务
 docker compose up -d
@@ -192,8 +176,8 @@ ESConv (Emotional Support Conversation) 是一个英文情感支持对话数据�
 ## 参考文献
 
 - ESConv: [Towards Emotional Support Dialog Systems](https://arxiv.org/abs/2106.01144)
-- SoulChat: [SoulChat 对话系统](https://github.com/scutcyr/SoulChat)
-- RexUniNLU: 统一信息抽取模型
+- SoulChat: [SoulChat2.0 心理咨询师数字孪生框架](https://github.com/scutcyr/SoulChat2.0/)
+- RexUniNLU: [RexUIE: A Recursive Method with Explicit Schema Instructor for Universal Information Extraction](https://arxiv.org/abs/2304.14770)
 
 ## License
 
