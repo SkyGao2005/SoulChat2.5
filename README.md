@@ -10,6 +10,10 @@ SoulChat2.5/
 │   ├── DatasetProcess/     # 数据集处理脚本
 │   ├── Synthesize/         # 对话数据合成脚本
 │   └── rex/                # RexUniNLU 策略分类模型
+├── vllm/                   # vLLM 后端服务
+│   ├── start_vllm.py       # 启动脚本
+│   ├── qwen3_nonthinking.jinja  # 对话模板
+│   └── README.md           # 配置说明
 ├── Prompts/                # 提示词模板
 │   ├── Patients/           # 来访者人格模板 (1-6.txt)
 │   ├── SynthesizePropmt.txt   # 对话合成提示词
@@ -99,14 +103,63 @@ python synthesize_dialogs.py --api-key YOUR_KEY
 python convert_to_sharegpt.py
 ```
 
-### 启动对话系统
+### 启动后端服务 (vLLM)
+
+vLLM 提供高性能的 LLM 推理服务，是对话系统的后端。
+
+#### 1. 安装 vLLM
+
+```bash
+pip install vllm
+```
+
+#### 2. 配置模型路径
+
+编辑 `vllm/start_vllm.py`，修改以下配置：
+
+```python
+MODEL_PATH = "./models/qwen3-14b-qlora-soulchat"  # 修改为您的模型路径
+SERVED_NAME = "qwen3-14b-soulchat"                # 服务名称
+HOST = "0.0.0.0"                                   # 监听地址
+PORT = "6006"                                      # 监听端口
+API_KEY = "sk-local-change-me"                    # API 密钥（建议修改）
+```
+
+#### 3. 启动服务
+
+```bash
+cd vllm
+python start_vllm.py
+```
+
+服务启动后，API 端点为：`http://localhost:6006/v1`
+
+#### 4. 验证服务
+
+```bash
+curl http://localhost:6006/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-local-change-me" \
+  -d '{
+    "model": "qwen3-14b-soulchat",
+    "messages": [{"role": "user", "content": "你好"}]
+  }'
+```
+
+详细配置说明请参考 [vllm/README.md](vllm/README.md)
+
+---
+
+### 启动前端界面 (LibreChat)
+
+LibreChat 提供 Web 聊天界面，连接 vLLM 后端服务。
 
 ```bash
 cd LibreChat
 
-# 设置环境变量
-export SOULCHAT_VLLM_API_KEY="your-key"
-export SOULCHAT_VLLM_BASE_URL="http://your-server:8000/v1"
+# 设置环境变量（与 vLLM 配置对应）
+export SOULCHAT_VLLM_API_KEY="sk-local-change-me"
+export SOULCHAT_VLLM_BASE_URL="http://localhost:6006/v1"
 
 # 启动服务
 docker compose up -d
@@ -117,7 +170,8 @@ docker compose up -d
 ## 详细文档
 
 - [src/README.md](src/README.md) - 源码使用说明
-- [LibreChat/README.md](LibreChat/README.md) - 配置文件说明
+- [vllm/README.md](vllm/README.md) - vLLM 后端配置说明
+- [LibreChat/README.md](LibreChat/README.md) - 前端界面配置说明
 
 ## 数据集说明
 
@@ -129,10 +183,11 @@ ESConv (Emotional Support Conversation) 是一个英文情感支持对话数据�
 
 ## 技术栈
 
-- **后端**：Python, PyTorch, Transformers
-- **LLM**：DeepSeek, Qwen
-- **分类模型**：RexUniNLU
-- **前端**：LibreChat, Docker
+- **推理后端**：vLLM, Python
+- **LLM**：Qwen3-14B (LoRA 微调)
+- **分类模型**：RexUniNLU, PyTorch, Transformers
+- **前端界面**：LibreChat, Docker
+- **数据合成**：DeepSeek API
 
 ## 参考文献
 
